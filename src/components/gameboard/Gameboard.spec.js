@@ -3,6 +3,10 @@ import Gameboard from './Gameboard';
 import Ship from '../ship/Ship';
 
 describe('Gameboard API', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   describe('Ship placement', () => {
     test('Ship placement on valid coordinates', () => {
       const gameboard = new Gameboard();
