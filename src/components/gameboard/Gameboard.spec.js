@@ -12,9 +12,16 @@ describe('Gameboard API', () => {
       const gameboard = new Gameboard();
       const ship = new Ship(2);
 
+      const expected = {
+        x: 0,
+        y: 1,
+        z: 'S',
+        ship,
+      };
+
       gameboard.placeShip(0, 1, 'S', ship);
 
-      expect(gameboard.ships).toContain([[0, 1, 'S'], ship]);
+      expect(gameboard.ships).toContainEqual(expected);
     });
 
     test('Ship placement on invalid coordinates', () => {
@@ -53,10 +60,17 @@ describe('Gameboard API', () => {
       const hitSpy = jest.spyOn(ship, 'hit');
       const isSunkSpy = jest.spyOn(ship, 'isSunk');
 
+      const expected = {
+        x: 0,
+        y: 1,
+        z: 'S',
+        ship,
+      };
+
       gameboard.placeShip(0, 1, 'S', ship);
       gameboard.receiveAttack(0, 1);
 
-      expect(gameboard.ships).toContain([[0, 1, 'S'], ship]);
+      expect(gameboard.ships).toContainEqual(expected);
       expect(hitSpy).toHaveBeenCalled();
       expect(isSunkSpy).toHaveBeenCalled();
       expect(isSunkSpy).toHaveReturned(false);
@@ -68,12 +82,19 @@ describe('Gameboard API', () => {
       const hitSpy = jest.spyOn(ship, 'hit');
       const isSunkSpy = jest.spyOn(ship, 'isSunk');
 
+      const expected = {
+        x: 0,
+        y: 1,
+        z: 'S',
+        ship,
+      };
+
       gameboard.placeShip(0, 1, 'S', ship);
 
       gameboard.receiveAttack(0, 1);
       gameboard.receiveAttack(1, 1);
 
-      expect(gameboard.ships).toContain([[0, 1, 'S'], ship]);
+      expect(gameboard.ships).toContainEqual(expected);
       expect(hitSpy).toHaveBeenCalledTimes(2);
       expect(isSunkSpy).toHaveBeenCalledTimes(2);
       expect(isSunkSpy).toHaveNthReturnedWith(0, false);
@@ -86,12 +107,19 @@ describe('Gameboard API', () => {
       const hitSpy = jest.spyOn(ship, 'hit');
       const isSunkSpy = jest.spyOn(ship, 'isSunk');
 
+      const expected = {
+        x: 0,
+        y: 1,
+        z: 'S',
+        ship,
+      };
+
       gameboard.placeShip(0, 1, 'S', ship);
 
       gameboard.receiveAttack(0, 1);
       gameboard.receiveAttack(1, 1);
 
-      expect(gameboard.ships).toContain([[0, 1, 'S'], ship]);
+      expect(gameboard.ships).toContainEqual(expected);
       expect(hitSpy).toHaveBeenCalledTimes(2);
       expect(isSunkSpy).toHaveBeenCalledTimes(2);
       expect(isSunkSpy).toHaveNthReturnedWith(0, false);

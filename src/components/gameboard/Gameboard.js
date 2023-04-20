@@ -9,3 +9,12 @@ export default class Gameboard {
 
   placeShip(x, y, z, ship) {}
 }
+
+export class GameboardObject {
+  constructor(x, y, z, ship) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.ship = ship;
+  }
+}
