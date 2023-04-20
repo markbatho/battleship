@@ -15,14 +15,14 @@ describe('Ship API', () => {
     jest.restoreAllMocks();
   });
 
-  test('Is ship get a hit?', () => {
+  test('Hit ship once', () => {
     ship.hit();
 
     expect(hitSpy).toHaveBeenCalled();
     expect(ship.hits).toBe(1);
   });
 
-  test('Is ship getting multiple hits?', () => {
+  test('Hit ship multiple times', () => {
     ship.hit();
     ship.hit();
     ship.hit();
@@ -31,7 +31,7 @@ describe('Ship API', () => {
     expect(ship.hits).toBe(3);
   });
 
-  test('Is ship sunken?', () => {
+  test('Sunk the ship', () => {
     for (ship.length; ship.hits < ship.length; ) {
       ship.hit();
     }
