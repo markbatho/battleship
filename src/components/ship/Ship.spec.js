@@ -1,21 +1,15 @@
 /* eslint-disable no-undef */
 import Ship from './Ship';
 
-const ship = new Ship(5);
-
-let hitSpy;
-
 describe('Ship API', () => {
-  beforeEach(() => {
-    hitSpy = jest.spyOn(ship, 'hit');
-  });
-
   afterEach(() => {
-    ship.hits = 0;
     jest.restoreAllMocks();
   });
 
   test('Hit ship once', () => {
+    const ship = new Ship(5);
+    const hitSpy = jest.spyOn(ship, 'hit');
+
     ship.hit();
 
     expect(hitSpy).toHaveBeenCalled();
@@ -23,6 +17,9 @@ describe('Ship API', () => {
   });
 
   test('Hit ship multiple times', () => {
+    const ship = new Ship(5);
+    const hitSpy = jest.spyOn(ship, 'hit');
+
     ship.hit();
     ship.hit();
     ship.hit();
@@ -32,6 +29,9 @@ describe('Ship API', () => {
   });
 
   test('Sunk the ship', () => {
+    const ship = new Ship(5);
+    const hitSpy = jest.spyOn(ship, 'hit');
+
     for (ship.length; ship.hits < ship.length; ) {
       ship.hit();
     }
