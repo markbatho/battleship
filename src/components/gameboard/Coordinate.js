@@ -3,4 +3,9 @@ export default class Coordinate {
     this.x = x;
     this.y = y;
   }
+
+  isEqual(coord) {
+    if (this.x === coord.x && this.y === coord.y) return true;
+    return false;
+  }
 }
