@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 import Gameboard from './Gameboard';
+import Coordinate from './Coordinate';
 import Ship from '../ship/Ship';
 
 describe('Gameboard API', () => {
@@ -12,11 +13,11 @@ describe('Gameboard API', () => {
       const gameboard = new Gameboard();
       const ship = new Ship(2);
       const expected = {
-        coords: [[2, 4], [2, 5], [2, 6]],
+        coords: [{x: 2, y: 4}, {x: 2, y: 5}, {x: 2, y: 6}],
         ship
       };
 
-      gameboard.placeShip(2, 4, 'N', ship);
+      gameboard.placeShip(new Coordinate(2, 4), 'N', ship);
 
       expect(gameboard.ships).toContainEqual(expected);
     });
@@ -25,7 +26,7 @@ describe('Gameboard API', () => {
       const gameboard = new Gameboard();
       const ship = new Ship(2);
 
-      expect(() =>  gameboard.placeShip(-1, 12, 'N', ship)).toThrow(Error);
+      expect(() =>  gameboard.placeShip(new Coordinate(-1, 12), 'N', ship)).toThrow(Error);
       expect(gameboard.ships).toHaveLength(0);
     });
 
@@ -34,9 +35,9 @@ describe('Gameboard API', () => {
       const ship1 = new Ship(2);
       const ship2 = new Ship(2);
 
-      gameboard.placeShip(2, 4, 'N', ship1);
+      gameboard.placeShip(new Coordinate(2, 4), 'N', ship1);
       
-      expect(() => gameboard.placeShip(2, 4, 'N', ship2)).toThrow(Error);
+      expect(() => gameboard.placeShip(new Coordinate(2, 4), 'N', ship2)).toThrow(Error);
       expect(gameboard.ships).toHaveLength(1);
     });
   });
