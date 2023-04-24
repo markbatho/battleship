@@ -59,10 +59,11 @@ describe('Gameboard API', () => {
       const isSunkSpy = jest.spyOn(ship, 'isSunk');
 
       gameboard.placeShip(new Coordinate(2, 4), 'N', ship);
-      gameboard.receiveAttack(shot);
+      const attack = gameboard.receiveAttack(shot);
 
       expect(hitSpy).toHaveBeenCalled();
       expect(isSunkSpy).toHaveReturnedWith(false);
+      expect(attack).toBe(true);
       expect(gameboard.shots).toContainEqual(shot);
     });
 
@@ -89,8 +90,9 @@ describe('Gameboard API', () => {
       const gameboard = new Gameboard();
       const shot = new Coordinate(2, 4);
 
-      gameboard.receiveAttack(shot);
+      const attack = gameboard.receiveAttack(shot);
 
+      expect(attack).toBe(false);
       expect(gameboard.missedShots).toContainEqual(shot);
     });
 

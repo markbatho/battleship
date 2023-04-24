@@ -7,6 +7,24 @@ export default class Gameboard {
     this.ships = [];
     this.shots = [];
     this.missedShots = [];
+    this.availableCoords = this.init();
+  }
+
+  init() {
+    const coords = [];
+    for (let i = 0; i < this.size; i++) {
+      for (let j = 0; j < this.size; j++) {
+        coords.push([i, j]);
+      }
+    }
+    return coords;
+  }
+
+  removeAvailableCoord(coord) {
+    const index = this.availableCoords.indexOf(
+      (element) => element[0] === coord.x && element[1] === coord.y
+    );
+    this.availableCoords.splice(index, 1);
   }
 
   receiveAttack(coord) {
@@ -22,13 +40,16 @@ export default class Gameboard {
         if (this.ships[i].coords[j].isEqual(coord)) {
           this.ships[i].ship.hit();
           this.ships[i].ship.isSunk();
+          this.removeAvailableCoord(coord);
           this.shots.push(coord);
-          return;
+          return true;
         }
       }
     }
 
+    this.removeAvailableCoord(coord);
     this.missedShots.push(coord);
+    return false;
   }
 
   placeShip(coord, dir, ship) {
