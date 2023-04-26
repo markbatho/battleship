@@ -15,8 +15,8 @@ describe('Gameboard API', () => {
       const expected = {
         coords: [
           { x: 2, y: 4 },
-          { x: 2, y: 5 },
-          { x: 2, y: 6 },
+          { x: 1, y: 4 },
+          { x: 0, y: 4 },
         ],
         ship,
       };
@@ -54,7 +54,7 @@ describe('Gameboard API', () => {
     test('Ship receives an attack', () => {
       const gameboard = new Gameboard();
       const ship = new Ship(3);
-      const shot = new Coordinate(2, 5);
+      const shot = new Coordinate(1, 4);
       const hitSpy = jest.spyOn(ship, 'hit');
       const isSunkSpy = jest.spyOn(ship, 'isSunk');
 
@@ -70,9 +70,9 @@ describe('Gameboard API', () => {
     test('Ship sunks', () => {
       const gameboard = new Gameboard();
       const ship = new Ship(3);
-      const shot1 = new Coordinate(2, 4);
-      const shot2 = new Coordinate(2, 5);
-      const shot3 = new Coordinate(2, 6);
+      const shot1 = new Coordinate(0, 4);
+      const shot2 = new Coordinate(1, 4);
+      const shot3 = new Coordinate(2, 4);
       const hitSpy = jest.spyOn(ship, 'hit');
       const isSunkSpy = jest.spyOn(ship, 'isSunk');
 
