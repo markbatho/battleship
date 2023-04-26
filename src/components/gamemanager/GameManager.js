@@ -1,3 +1,4 @@
+import Coordinate from '../gameboard/Coordinate';
 import Ship from '../ship/Ship';
 
 export default class GameManager {
@@ -113,7 +114,12 @@ export default class GameManager {
         if (fleet.length > 0) {
           if (activeCells.length === fleet[fleet.length - 1].length) {
             activeCells.forEach((elem) => (elem.className = 'ship'));
-            fleet.pop();
+            const coord = new Coordinate(
+              +event.target.dataset.coord[0],
+              +event.target.dataset.coord[2]
+            );
+            const ship = fleet.pop();
+            this.player.gameboard.placeShip(coord, dir, ship);
             deselectCells();
           }
         }

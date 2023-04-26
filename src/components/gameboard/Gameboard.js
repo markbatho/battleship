@@ -68,16 +68,16 @@ export default class Gameboard {
     for (let i = 0; i < length; i++) {
       switch (dir) {
         case 'N':
-          coords.push(new Coordinate(coord.x, coord.y + i));
-          break;
-        case 'S':
-          coords.push(new Coordinate(coord.x, coord.y - i));
-          break;
-        case 'W':
           coords.push(new Coordinate(coord.x - i, coord.y));
           break;
-        case 'E':
+        case 'S':
           coords.push(new Coordinate(coord.x + i, coord.y));
+          break;
+        case 'W':
+          coords.push(new Coordinate(coord.x, coord.y + i));
+          break;
+        case 'E':
+          coords.push(new Coordinate(coord.x, coord.y - i));
           break;
       }
     }
@@ -100,7 +100,12 @@ export default class Gameboard {
   validateCoordsAvailable(coords) {
     for (let i = 0; i < coords.length; i++) {
       for (let j = 0; j < this.ships.length; j++) {
-        if (this.ships[j].coords.inlude(coords[i])) return false;
+        if (
+          this.ships[j].coords.find(
+            (elem) => elem.x === coords[i].x && elem.y === coords[i].y
+          )
+        )
+          return false;
       }
     }
 
