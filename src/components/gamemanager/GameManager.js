@@ -6,8 +6,7 @@ export default class GameManager {
     this.player = player;
     this.computer = computer;
     this.parent = parent;
-    this.playerBoard = null;
-    this.computerBoard = null;
+    this.unavailableCells = [];
   }
 
   renderDeploymentBoard() {
@@ -25,7 +24,7 @@ export default class GameManager {
     for (let i = 0; i < this.player.gameboard.size; i++) {
       for (let j = 0; j < this.player.gameboard.size; j++) {
         const cell = document.createElement('div');
-        cell.className = 'placement-cell';
+        cell.className = 'cell cell-base';
         cell.dataset.coord = [i, j];
         board.appendChild(cell);
       }
@@ -35,6 +34,13 @@ export default class GameManager {
     let dir = 'W';
 
     function selectCells(start, dir, length) {
+      const markedCells = document.querySelectorAll('.cell-unavailable');
+      Array.from(markedCells).forEach((cell) =>
+        cell.classList.replace('cell-unavailable', 'cell-base')
+      );
+
+      let unavailable = false;
+
       for (let i = 0; i < length; i++) {
         let nextCell;
 
@@ -64,39 +70,54 @@ export default class GameManager {
 
         if (nextCell) {
           activeCells.push(nextCell);
-          nextCell.style.backgroundColor = '#ccc';
+          nextCell.classList.replace('cell-base', 'cell-selected');
+
+          if (this.unavailableCells.includes(nextCell) && !unavailable)
+            unavailable = true;
         } else {
-          activeCells.forEach((elem) => (elem.style.backgroundColor = 'red'));
-          start.style.cursor = 'not-allowed';
+          activeCells.forEach((elem) =>
+            elem.classList.replace('cell-selected', 'cell-unavailable')
+          );
         }
       }
+
+      if (unavailable) markCellsUnavailable();
     }
 
     function deselectCells() {
       while (activeCells.length > 0) {
         const elem = activeCells.pop();
-        elem.style.backgroundColor = '#f2f2f2';
-        elem.style.cursor = 'auto';
+        elem.classList.replace('cell-selected', 'cell-base');
       }
     }
 
+    function markCellsUnavailable() {
+      activeCells.forEach((cell) =>
+        cell.classList.replace('cell-selected', 'cell-unavailable')
+      );
+    }
+
     board.addEventListener('mouseover', (event) => {
-      if (event.target.classList.contains('placement-cell')) {
+      if (event.target.classList.contains('cell')) {
         if (fleet.length > 0) {
-          selectCells(event.target, dir, fleet[fleet.length - 1].length);
-          console.log('called?');
+          selectCells.call(
+            this,
+            event.target,
+            dir,
+            fleet[fleet.length - 1].length
+          );
         }
       }
     });
 
     board.addEventListener('mouseout', (event) => {
-      if (event.target.classList.contains('placement-cell')) {
+      if (event.target.classList.contains('cell')) {
         deselectCells();
       }
     });
 
     board.addEventListener('wheel', (event) => {
-      if (event.target.classList.contains('placement-cell')) {
+      if (event.target.classList.contains('cell')) {
         if (fleet.length > 0) {
           if (dir === 'N') dir = 'W';
           else if (dir === 'S') dir = 'E';
@@ -104,16 +125,28 @@ export default class GameManager {
           else if (dir === 'E') dir = 'N';
 
           deselectCells();
-          selectCells(event.target, dir, fleet[fleet.length - 1].length);
+          selectCells.call(
+            this,
+            event.target,
+            dir,
+            fleet[fleet.length - 1].length
+          );
         }
       }
     });
 
     board.addEventListener('click', (event) => {
-      if (event.target.classList.contains('placement-cell')) {
+      if (event.target.classList.contains('cell')) {
         if (fleet.length > 0) {
           if (activeCells.length === fleet[fleet.length - 1].length) {
+            for (let i = 0; i <= activeCells.length; i++) {
+              if (this.unavailableCells.includes(activeCells[i])) {
+                return;
+              }
+            }
+            console.log(activeCells);
             activeCells.forEach((elem) => (elem.className = 'ship'));
+            this.unavailableCells.push(...activeCells);
             const coord = new Coordinate(
               +event.target.dataset.coord[0],
               +event.target.dataset.coord[2]
