@@ -21,9 +21,12 @@ export default class GameManager {
     const deploymentBoard = new DeploymentBoard(
       this.player,
       fleet,
-      this.parent
+      this.parent,
+      this.startGame
     );
 
     deploymentBoard.initBoard();
   }
+
+  startGame() {}
 }

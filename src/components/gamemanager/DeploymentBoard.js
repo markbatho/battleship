@@ -1,10 +1,11 @@
 import Coordinate from '../gameboard/Coordinate';
 
 export default class DeploymentBoard {
-  constructor(player, fleet, parent) {
+  constructor(player, fleet, parent, cb) {
     this.player = player;
     this.fleet = fleet;
     this.parent = parent;
+    this.cb = cb;
     this.direction = 'W';
     this.hoveredCells = [];
     this.unavailableCells = [];
@@ -14,6 +15,10 @@ export default class DeploymentBoard {
   initBoard() {
     const board = document.createElement('div');
     board.className = 'board';
+
+    const startGame = document.createElement('button');
+    startGame.setAttribute('disabled', '');
+    startGame.textContent = 'Start Game';
 
     for (let i = 0; i < this.player.gameboard.size; i++) {
       for (let j = 0; j < this.player.gameboard.size; j++) {
@@ -82,7 +87,10 @@ export default class DeploymentBoard {
             this.player.gameboard.placeShip(coord, this.direction, ship);
             this.deselectCells();
 
-            if (this.fleet.length === 0) return 'ready';
+            if (this.fleet.length === 0) {
+              startGame.removeAttribute('disabled');
+              startGame.addEventListener('click', () => this.cb());
+            }
           }
         }
       }
@@ -90,6 +98,7 @@ export default class DeploymentBoard {
 
     this.parent.replaceChildren();
     this.parent.appendChild(board);
+    this.parent.appendChild(startGame);
   }
 
   selectCells(start, length) {
