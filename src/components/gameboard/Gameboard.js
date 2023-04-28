@@ -60,6 +60,29 @@ export default class Gameboard {
       throw new Error('Coordinate not available');
 
     this.ships.push(new GameboardObject(coords, ship));
+    return true;
+  }
+
+  autoPlaceFleet(fleet) {
+    const directions = ['N', 'S', 'W', 'E'];
+    const min = 0;
+    const dirMax = directions.length;
+    const sizeMax = this.size;
+
+    while (fleet.length > 0) {
+      try {
+        const dir = Math.floor(Math.random() * (dirMax - min) + min);
+        const x = Math.floor(Math.random() * (sizeMax - min) + min);
+        const y = Math.floor(Math.random() * (sizeMax - min) + min);
+        const coord = new Coordinate(x, y);
+
+        if (this.placeShip(coord, directions[dir], fleet[fleet.length - 1])) {
+          fleet.pop();
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
   }
 
   getCoords(coord, dir, length) {

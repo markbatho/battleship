@@ -11,11 +11,11 @@ export default class GameManager {
 
   renderDeploymentBoard() {
     const fleet = [
-      new Ship(2),
-      new Ship(3),
-      new Ship(3),
-      new Ship(4),
-      new Ship(5),
+      new Ship(2, 'patrolboat'),
+      new Ship(3, 'submarine'),
+      new Ship(3, 'destroyer'),
+      new Ship(4, 'battleship'),
+      new Ship(5, 'carrier'),
     ];
 
     const deploymentBoard = new DeploymentBoard(
@@ -41,18 +41,27 @@ export default class GameManager {
       }
     }
 
-    gameboard.ships.forEach((ship) => {
-      ship.coords.forEach((coord) => {
+    gameboard.ships.forEach((gameboardObject) => {
+      gameboardObject.coords.forEach((coord) => {
         const cell = parent.querySelector(
           `[data-coord="${coord.x},${coord.y}"]`
         );
-        cell.className = 'ship';
+        cell.classList.add('ship', gameboardObject.ship.type);
       });
     });
   }
 
   startGame() {
     this.parent.replaceChildren();
+
+    const fleet = [
+      new Ship(2, 'patrolboat'),
+      new Ship(3, 'submarine'),
+      new Ship(3, 'destroyer'),
+      new Ship(4, 'battleship'),
+      new Ship(5, 'carrier'),
+    ];
+    this.computer.gameboard.autoPlaceFleet(fleet);
 
     const boardContainer = document.createElement('div');
     boardContainer.id = 'boardContainer';

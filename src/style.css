@@ -11,7 +11,6 @@
 }
 
 .ship {
-  background-color: #777777;
   border: 2px solid #212121;
 }
 
@@ -29,4 +28,24 @@
 .cell-unavailable {
   background-color: red;
   cursor: not-allowed;
+}
+
+.carrier {
+  background-color: crimson;
+}
+
+.battleship {
+  background-color: darkolivegreen;
+}
+
+.destroyer {
+  background-color: violet;
+}
+
+.submarine {
+  background-color: orange;
+}
+
+.patrolboat {
+  background-color: cadetblue;
 }

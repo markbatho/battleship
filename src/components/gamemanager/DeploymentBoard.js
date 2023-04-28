@@ -78,13 +78,16 @@ export default class DeploymentBoard {
               }
             }
 
-            this.hoveredCells.forEach((elem) => (elem.className = 'ship'));
+            const ship = this.fleet.pop();
+
+            this.hoveredCells.forEach((elem) =>
+              elem.classList.add('ship', ship.type)
+            );
             this.unavailableCells.push(...this.hoveredCells);
             const coord = new Coordinate(
               +event.target.dataset.coord[0],
               +event.target.dataset.coord[2]
             );
-            const ship = this.fleet.pop();
             this.player.gameboard.placeShip(coord, this.direction, ship);
             this.deselectCells();
 
