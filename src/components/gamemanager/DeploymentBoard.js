@@ -1,11 +1,12 @@
 import Coordinate from '../gameboard/Coordinate';
 
 export default class DeploymentBoard {
-  constructor(player, fleet, parent, cb) {
+  constructor(player, fleet, parent, cb, scope) {
     this.player = player;
     this.fleet = fleet;
     this.parent = parent;
     this.cb = cb;
+    this.scope = scope;
     this.direction = 'W';
     this.hoveredCells = [];
     this.unavailableCells = [];
@@ -89,7 +90,9 @@ export default class DeploymentBoard {
 
             if (this.fleet.length === 0) {
               startGame.removeAttribute('disabled');
-              startGame.addEventListener('click', () => this.cb());
+              startGame.addEventListener('click', () =>
+                this.cb.call(this.scope)
+              );
             }
           }
         }

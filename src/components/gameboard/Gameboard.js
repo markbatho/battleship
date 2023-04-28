@@ -108,7 +108,13 @@ export default class Gameboard {
           return false;
       }
     }
-
     return true;
+  }
+
+  resetBoard() {
+    this.ships = [];
+    this.shots = [];
+    this.missedShots = [];
+    this.availableCoords = this.init();
   }
 }
