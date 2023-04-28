@@ -1,3 +1,9 @@
+.message-container {
+  display: flex;
+  background-color: #f7f7f7;
+  padding: 8px;
+}
+
 #boardContainer {
   display: flex;
   gap: 25px;

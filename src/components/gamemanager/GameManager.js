@@ -2,11 +2,12 @@ import Ship from '../ship/Ship';
 import DeploymentBoard from './DeploymentBoard';
 
 export default class GameManager {
-  constructor(player, computer, parent) {
+  constructor(player, computer, parent, updateMessageCb) {
     this.player = player;
     this.computer = computer;
     this.parent = parent;
     this.unavailableCells = [];
+    this.updateMessageCb = updateMessageCb;
   }
 
   renderDeploymentBoard() {
@@ -23,6 +24,7 @@ export default class GameManager {
       fleet,
       this.parent,
       this.startGame,
+      this.updateMessageCb,
       this
     );
 
@@ -30,8 +32,6 @@ export default class GameManager {
   }
 
   renderBoard(gameboard, parent) {
-    // Render cells
-    // Iterate over GameboardObjects' coords, place coord on board
     for (let i = 0; i < gameboard.size; i++) {
       for (let j = 0; j < gameboard.size; j++) {
         const cell = document.createElement('div');
@@ -53,6 +53,8 @@ export default class GameManager {
 
   startGame() {
     this.parent.replaceChildren();
+
+    this.updateMessageCb("Aim at the opponent's board!");
 
     const fleet = [
       new Ship(2, 'patrolboat'),

@@ -1,11 +1,12 @@
 import Coordinate from '../gameboard/Coordinate';
 
 export default class DeploymentBoard {
-  constructor(player, fleet, parent, cb, scope) {
+  constructor(player, fleet, parent, cb, updateMessageCb, scope) {
     this.player = player;
     this.fleet = fleet;
     this.parent = parent;
     this.cb = cb;
+    this.updateMessageCb = updateMessageCb;
     this.scope = scope;
     this.direction = 'W';
     this.hoveredCells = [];
@@ -14,6 +15,10 @@ export default class DeploymentBoard {
   }
 
   initBoard() {
+    this.updateMessageCb(
+      `Place your ${this.fleet[this.fleet.length - 1].type}!`
+    );
+
     const board = document.createElement('div');
     board.className = 'board';
 
@@ -83,15 +88,26 @@ export default class DeploymentBoard {
             this.hoveredCells.forEach((elem) =>
               elem.classList.add('ship', ship.type)
             );
+
             this.unavailableCells.push(...this.hoveredCells);
+
             const coord = new Coordinate(
               +event.target.dataset.coord[0],
               +event.target.dataset.coord[2]
             );
+
             this.player.gameboard.placeShip(coord, this.direction, ship);
+
             this.deselectCells();
 
+            if (this.fleet[this.fleet.length - 1]) {
+              this.updateMessageCb(
+                `Place your ${this.fleet[this.fleet.length - 1].type}!`
+              );
+            }
+
             if (this.fleet.length === 0) {
+              this.updateMessageCb('You can start the game!');
               startGame.removeAttribute('disabled');
               startGame.addEventListener('click', () =>
                 this.cb.call(this.scope)
