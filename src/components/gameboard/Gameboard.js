@@ -14,16 +14,22 @@ export default class Gameboard {
     const coords = [];
     for (let i = 0; i < this.size; i++) {
       for (let j = 0; j < this.size; j++) {
-        coords.push([i, j]);
+        coords.push(new Coordinate(i, j));
       }
     }
     return coords;
   }
 
   removeAvailableCoord(coord) {
-    const index = this.availableCoords.indexOf(
-      (element) => element[0] === coord.x && element[1] === coord.y
-    );
+    // const index = this.availableCoords.indexOf(
+    //   (element) => element[0] === coord.x && element[1] === coord.y
+    // );
+    // this.availableCoords.splice(index, 1);
+
+    const index = this.availableCoords.findIndex((element) => {
+      return element.isEqual(coord);
+    });
+
     this.availableCoords.splice(index, 1);
   }
 
@@ -32,7 +38,11 @@ export default class Gameboard {
     if (!this.validateCoords([coord])) throw new Error('Invalid coordinate');
     if (this.shots.find((elem) => elem.isEqual(coord)))
       throw new Error('Already hit coordinate');
-    if (this.missedShots.find((elem) => elem.isEqual(coord)))
+    if (
+      this.missedShots.find((elem) => {
+        elem.isEqual(coord);
+      })
+    )
       throw new Error('Already hit coordinate');
 
     for (let i = 0; i < this.ships.length; i++) {

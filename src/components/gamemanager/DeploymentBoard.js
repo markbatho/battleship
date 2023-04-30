@@ -29,7 +29,7 @@ export default class DeploymentBoard {
     for (let i = 0; i < this.player.gameboard.size; i++) {
       for (let j = 0; j < this.player.gameboard.size; j++) {
         const cell = document.createElement('div');
-        cell.className = 'cell cell-base';
+        cell.classList.add('cell', 'cell-base');
         cell.dataset.coord = [i, j];
         board.appendChild(cell);
       }
@@ -85,9 +85,9 @@ export default class DeploymentBoard {
 
             const ship = this.fleet.pop();
 
-            this.hoveredCells.forEach((elem) =>
-              elem.classList.add('ship', ship.type)
-            );
+            this.hoveredCells.forEach((elem) => {
+              elem.classList.add('ship', ship.type);
+            });
 
             this.unavailableCells.push(...this.hoveredCells);
 

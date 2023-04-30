@@ -27,9 +27,9 @@ app.appendChild(messageContainer);
 app.appendChild(boardContainer);
 
 const playerBoard = new Gameboard();
-const player = new Player(playerBoard);
 const computerBoard = new Gameboard();
-const computer = new Player(computerBoard);
+const player = new Player(computerBoard);
+const computer = new Player(playerBoard);
 const gameManager = new GameManager(
   player,
   computer,

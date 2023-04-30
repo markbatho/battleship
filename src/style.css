@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 .message-container {
   display: flex;
   background-color: #f7f7f7;
@@ -17,7 +21,8 @@
 }
 
 .ship {
-  border: 2px solid #212121;
+  background-color: slategrey !important;
+  /* border: 2px solid #212121; */
 }
 
 .cell {
@@ -36,22 +41,42 @@
   cursor: not-allowed;
 }
 
+.cell-opponent {
+  cursor: crosshair;
+}
+
+.cell-opponent:hover {
+  background-color: lightcoral;
+}
+
+.cell-receivedshot {
+  border: 4px solid yellow;
+}
+
+.cell-hit {
+  border: 4px solid red;
+}
+
+.cell-missed {
+  background-color: steelblue;
+}
+
 .carrier {
-  background-color: crimson;
+  /* background-color: crimson; */
 }
 
 .battleship {
-  background-color: darkolivegreen;
+  /* background-color: darkolivegreen; */
 }
 
 .destroyer {
-  background-color: violet;
+  /* background-color: violet; */
 }
 
 .submarine {
-  background-color: orange;
+  /* background-color: orange; */
 }
 
 .patrolboat {
-  background-color: cadetblue;
+  /* background-color: cadetblue; */
 }

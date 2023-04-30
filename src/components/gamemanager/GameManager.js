@@ -1,3 +1,4 @@
+import Coordinate from '../gameboard/Coordinate';
 import Ship from '../ship/Ship';
 import DeploymentBoard from './DeploymentBoard';
 
@@ -8,6 +9,7 @@ export default class GameManager {
     this.parent = parent;
     this.unavailableCells = [];
     this.updateMessageCb = updateMessageCb;
+    this.playerTurn = true;
   }
 
   renderDeploymentBoard() {
@@ -31,12 +33,80 @@ export default class GameManager {
     deploymentBoard.initBoard();
   }
 
-  renderBoard(gameboard, parent) {
+  renderBoard(gameboard, parent, playerBoardX = false, opponentBoard = null) {
     for (let i = 0; i < gameboard.size; i++) {
       for (let j = 0; j < gameboard.size; j++) {
         const cell = document.createElement('div');
         cell.className = 'cell cell-base';
         cell.dataset.coord = [i, j];
+
+        if (!playerBoardX) {
+          cell.classList.add('cell-opponent');
+          cell.addEventListener('click', () => {
+            const coord = new Coordinate(
+              +cell.dataset.coord[0],
+              +cell.dataset.coord[2]
+            );
+
+            if (this.playerTurn) {
+              this.playerTurn = false;
+
+              const cellCoord = this.computer.gameboard.availableCoords.find(
+                (element) => {
+                  return element.isEqual(coord);
+                }
+              );
+
+              if (cellCoord) {
+                this.updateMessageCb('Player shooting...');
+                cell.classList.add('cell-receivedshot');
+
+                setTimeout(() => {
+                  cell.classList.remove('cell-receivedshot');
+                  if (this.computer.manualAttack(coord)) {
+                    cell.classList.add('cell-hit');
+                    this.updateMessageCb('Hit!');
+                  } else {
+                    cell.classList.add('cell-missed');
+                    this.updateMessageCb('Missed');
+                  }
+
+                  setTimeout(() => {
+                    this.updateMessageCb('Computer is shooting...');
+
+                    const computerAttack = this.player.autoAttack();
+                    const playerCell = opponentBoard.querySelector(
+                      `[data-coord="${computerAttack.coord.x},${computerAttack.coord.y}"]`
+                    );
+
+                    playerCell.classList.add('cell-receivedshot');
+
+                    setTimeout(() => {
+                      playerCell.classList.remove('cell-receivedshot');
+                      if (computerAttack.hit) {
+                        playerCell.classList.add('cell-hit');
+                        this.updateMessageCb('Hit!');
+                      } else {
+                        playerCell.classList.add('cell-missed');
+                        this.updateMessageCb('Missed');
+                      }
+                      this.playerTurn = true;
+
+                      setTimeout(() => {
+                        this.updateMessageCb('Your turn!');
+                      }, 100);
+                    }, 100);
+                  }, 100);
+                }, 100);
+              } else {
+                setTimeout(() => {
+                  this.playerTurn = true;
+                }, 100);
+              }
+            }
+          });
+        }
+
         parent.appendChild(cell);
       }
     }
@@ -46,9 +116,22 @@ export default class GameManager {
         const cell = parent.querySelector(
           `[data-coord="${coord.x},${coord.y}"]`
         );
+
         cell.classList.add('ship', gameboardObject.ship.type);
       });
     });
+
+    if (playerBoardX) {
+      gameboard.ships.forEach((gameboardObject) => {
+        gameboardObject.coords.forEach((coord) => {
+          const cell = parent.querySelector(
+            `[data-coord="${coord.x},${coord.y}"]`
+          );
+
+          cell.classList.add('ship', gameboardObject.ship.type);
+        });
+      });
+    }
   }
 
   startGame() {
@@ -70,11 +153,16 @@ export default class GameManager {
 
     const playerBoard = document.createElement('div');
     playerBoard.classList.add('board');
-    this.renderBoard(this.player.gameboard, playerBoard);
+    this.renderBoard(this.player.gameboard, playerBoard, true);
 
     const computerBoard = document.createElement('div');
     computerBoard.classList.add('board');
-    this.renderBoard(this.computer.gameboard, computerBoard);
+    this.renderBoard(
+      this.computer.gameboard,
+      computerBoard,
+      false,
+      playerBoard
+    );
 
     const restartGame = document.createElement('button');
     restartGame.textContent = 'Restart Game';
