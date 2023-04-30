@@ -10,6 +10,7 @@ export default class GameManager {
     this.unavailableCells = [];
     this.updateMessageCb = updateMessageCb;
     this.playerTurn = true;
+    this.isWinner = false;
   }
 
   renderDeploymentBoard() {
@@ -33,6 +34,7 @@ export default class GameManager {
     deploymentBoard.initBoard();
   }
 
+  // TODO: Clean it up / Refactor
   renderBoard(gameboard, parent, playerBoardX = false, opponentBoard = null) {
     for (let i = 0; i < gameboard.size; i++) {
       for (let j = 0; j < gameboard.size; j++) {
@@ -43,65 +45,96 @@ export default class GameManager {
         if (!playerBoardX) {
           cell.classList.add('cell-opponent');
           cell.addEventListener('click', () => {
+            console.log(this.isWinner);
             const coord = new Coordinate(
               +cell.dataset.coord[0],
               +cell.dataset.coord[2]
             );
 
-            if (this.playerTurn) {
-              this.playerTurn = false;
+            if (!this.isWinner) {
+              if (this.playerTurn) {
+                this.playerTurn = false;
 
-              const cellCoord = this.computer.gameboard.availableCoords.find(
-                (element) => {
-                  return element.isEqual(coord);
-                }
-              );
-
-              if (cellCoord) {
-                this.updateMessageCb('Player shooting...');
-                cell.classList.add('cell-receivedshot');
-
-                setTimeout(() => {
-                  cell.classList.remove('cell-receivedshot');
-                  if (this.computer.manualAttack(coord)) {
-                    cell.classList.add('cell-hit');
-                    this.updateMessageCb('Hit!');
-                  } else {
-                    cell.classList.add('cell-missed');
-                    this.updateMessageCb('Missed');
+                const cellCoord = this.computer.gameboard.availableCoords.find(
+                  (element) => {
+                    return element.isEqual(coord);
                   }
+                );
+
+                if (cellCoord) {
+                  this.updateMessageCb('Player shooting...');
+                  cell.classList.add('cell-receivedshot');
 
                   setTimeout(() => {
-                    this.updateMessageCb('Computer is shooting...');
+                    cell.classList.remove('cell-receivedshot');
+                    if (this.computer.manualAttack(coord)) {
+                      cell.classList.add('cell-hit');
+                      this.updateMessageCb('Hit!');
+                    } else {
+                      cell.classList.add('cell-missed');
+                      this.updateMessageCb('Missed');
+                    }
 
-                    const computerAttack = this.player.autoAttack();
-                    const playerCell = opponentBoard.querySelector(
-                      `[data-coord="${computerAttack.coord.x},${computerAttack.coord.y}"]`
-                    );
+                    this.evalIsWinner();
 
-                    playerCell.classList.add('cell-receivedshot');
+                    const a = this.player.gameboard.getShipsLength();
+                    const b = this.computer.gameboard.getShipsLength();
 
-                    setTimeout(() => {
-                      playerCell.classList.remove('cell-receivedshot');
-                      if (computerAttack.hit) {
-                        playerCell.classList.add('cell-hit');
-                        this.updateMessageCb('Hit!');
+                    if (this.isWinner) {
+                      if (a < b) {
+                        this.updateMessageCb('Comp win');
                       } else {
-                        playerCell.classList.add('cell-missed');
-                        this.updateMessageCb('Missed');
+                        this.updateMessageCb('Player win');
                       }
-                      this.playerTurn = true;
+                    }
 
+                    if (!this.isWinner) {
                       setTimeout(() => {
-                        this.updateMessageCb('Your turn!');
+                        this.updateMessageCb('Computer is shooting...');
+
+                        const computerAttack = this.player.autoAttack();
+                        const playerCell = opponentBoard.querySelector(
+                          `[data-coord="${computerAttack.coord.x},${computerAttack.coord.y}"]`
+                        );
+
+                        playerCell.classList.add('cell-receivedshot');
+
+                        setTimeout(() => {
+                          playerCell.classList.remove('cell-receivedshot');
+                          if (computerAttack.hit) {
+                            playerCell.classList.add('cell-hit');
+                            this.updateMessageCb('Hit!');
+                          } else {
+                            playerCell.classList.add('cell-missed');
+                            this.updateMessageCb('Missed');
+                          }
+
+                          this.playerTurn = true;
+                          this.evalIsWinner();
+
+                          setTimeout(() => {
+                            this.updateMessageCb('Your turn!');
+
+                            if (this.isWinner) {
+                              const a = this.player.gameboard.getShipsLength();
+                              const b =
+                                this.computer.gameboard.getShipsLength();
+                              if (a < b) {
+                                this.updateMessageCb('Comp win');
+                              } else {
+                                this.updateMessageCb('Player win');
+                              }
+                            }
+                          }, 100);
+                        }, 100);
                       }, 100);
-                    }, 100);
+                    }
                   }, 100);
-                }, 100);
-              } else {
-                setTimeout(() => {
-                  this.playerTurn = true;
-                }, 100);
+                } else {
+                  setTimeout(() => {
+                    this.playerTurn = true;
+                  }, 100);
+                }
               }
             }
           });
@@ -110,16 +143,6 @@ export default class GameManager {
         parent.appendChild(cell);
       }
     }
-
-    gameboard.ships.forEach((gameboardObject) => {
-      gameboardObject.coords.forEach((coord) => {
-        const cell = parent.querySelector(
-          `[data-coord="${coord.x},${coord.y}"]`
-        );
-
-        cell.classList.add('ship', gameboardObject.ship.type);
-      });
-    });
 
     if (playerBoardX) {
       gameboard.ships.forEach((gameboardObject) => {
@@ -131,6 +154,15 @@ export default class GameManager {
           cell.classList.add('ship', gameboardObject.ship.type);
         });
       });
+    }
+  }
+
+  evalIsWinner() {
+    if (this.player.gameboard.getShipsLength() === 0) {
+      this.isWinner = true;
+    }
+    if (this.computer.gameboard.getShipsLength() === 0) {
+      this.isWinner = true;
     }
   }
 
@@ -167,6 +199,8 @@ export default class GameManager {
     const restartGame = document.createElement('button');
     restartGame.textContent = 'Restart Game';
     restartGame.addEventListener('click', () => {
+      this.isWinner = false;
+      this.playerTurn = true;
       this.player.gameboard.resetBoard();
       this.computer.gameboard.resetBoard();
       this.parent.replaceChildren();

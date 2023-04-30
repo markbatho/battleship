@@ -20,6 +20,10 @@ export default class Gameboard {
     return coords;
   }
 
+  getShipsLength() {
+    return this.ships.length;
+  }
+
   removeAvailableCoord(coord) {
     // const index = this.availableCoords.indexOf(
     //   (element) => element[0] === coord.x && element[1] === coord.y
@@ -49,7 +53,11 @@ export default class Gameboard {
       for (let j = 0; j < this.ships[i].coords.length; j++) {
         if (this.ships[i].coords[j].isEqual(coord)) {
           this.ships[i].ship.hit();
-          this.ships[i].ship.isSunk();
+
+          if (this.ships[i].ship.isSunk()) {
+            this.ships.splice(i, 1);
+          }
+
           this.removeAvailableCoord(coord);
           this.shots.push(coord);
           return true;
